@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+    --description-color: #333;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --description-color: #E4ECFF;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+
+  /* Headings with responsive styling */
+  .heading {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold text-center;
+  }
+
+  /* Text gradient that works in both light and dark modes */
+  .text-gradient {
+    background-image: linear-gradient(to right, #3B82F6, #8B5CF6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Card hover styles improved for both modes */
+  .card-hover {
+    @apply hover:shadow-lg transition-all duration-300;
+  }
+
+  .dark .card-hover {
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+  }
+    /* Add this to your global CSS file */
+    .text-gradient-light {
+      background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+
+  .card-hover:not(.dark) {
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Custom background styles for both modes */
+  .bg-custom-light {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .dark .bg-custom-light {
+    background-color: rgba(17, 25, 40, 0.75);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Additional utility classes for theme transitions */
+  .theme-transition {
+    @apply transition-colors duration-300;
+  }
+    @keyframes meteor {
+      0% {
+        transform: rotate(215deg) translateX(0);
+        opacity: 0;
+      }
+  
+      10% {
+        opacity: 1;
+      }
+  
+      70% {
+        opacity: 1;
+      }
+  
+      100% {
+        transform: rotate(215deg) translateX(-500px);
+        opacity: 0;
+      }
+    }
+  
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+  
+      50% {
+        background-position: 100% 50%;
+      }
+  
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  
+    .animate-meteor {
+      animation: meteor linear infinite;
+    }
+  
+    .animate-gradient {
+      animation: gradient 8s ease infinite;
+      background-size: 200% 200%;
+    }
+  
+    .bg-grid-pattern {
+      background-image:
+        linear-gradient(to right, rgba(100, 100, 100, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(100, 100, 100, 0.1) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+         @keyframes pulse {
+    
+           0%,
+           100% {
+             opacity: 0.2;
+           }
+    
+           50% {
+             opacity: 0.8;
+           }
+         }
+    
+         .dark {
+           --card-bg-from: #13162D;
+           --card-bg-to: #090B1A;
+           --card-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.7);
+         }
+    
+         .light {
+           --card-bg-from: rgb(249 250 251 / 0.8);
+           --card-bg-to: rgb(243 244 246 / 0.8);
+           --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+         }
+}
