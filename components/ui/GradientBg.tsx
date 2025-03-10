@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 export const BackgroundGradientAnimation = ({
   gradientBackgroundStart = "rgb(108, 0, 162)",
@@ -34,12 +34,30 @@ export const BackgroundGradientAnimation = ({
   containerClassName?: string;
 }) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
-
-  const [curX, setCurX] = useState(0);
-  const [curY, setCurY] = useState(0);
+  const curX = useRef(0); // Use useRef for animation values
+  const curY = useRef(0);
   const [tgX, setTgX] = useState(0);
   const [tgY, setTgY] = useState(0);
+  const animationFrameId = useRef<number | null>(null); // Store animation frame ID
+
+  const move = useCallback(() => {
+    // Use useCallback
+    if (!interactiveRef.current) {
+      return;
+    }
+    //Functional updates
+    curX.current += (tgX - curX.current) / 20;
+    curY.current += (tgY - curY.current) / 20;
+
+    interactiveRef.current.style.transform = `translate(${Math.round(
+      curX.current
+    )}px, ${Math.round(curY.current)}px)`;
+
+    animationFrameId.current = requestAnimationFrame(move); // Store ID
+  }, [tgX, tgY]);
+
   useEffect(() => {
+    if (typeof window === "undefined") return; // Important check!
     document.body.style.setProperty(
       "--gradient-background-start",
       gradientBackgroundStart
@@ -56,35 +74,57 @@ export const BackgroundGradientAnimation = ({
     document.body.style.setProperty("--pointer-color", pointerColor);
     document.body.style.setProperty("--size", size);
     document.body.style.setProperty("--blending-value", blendingValue);
-  }, []);
+
+    // Safari check inside useEffect
+    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+
+    // Start animation loop
+    animationFrameId.current = requestAnimationFrame(move);
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current); // Cleanup!
+      }
+    };
+  }, [
+    gradientBackgroundStart,
+    gradientBackgroundEnd,
+    firstColor,
+    secondColor,
+    thirdColor,
+    fourthColor,
+    fifthColor,
+    pointerColor,
+    size,
+    blendingValue,
+    move,
+  ]); // Add dependencies
+  //Now that move is memoized, we can include tgX and tgY in the dependency array.
 
   useEffect(() => {
-    function move() {
-      if (!interactiveRef.current) {
-        return;
+    // Event listener in separate useEffect
+    const handleMouseMove = (event: MouseEvent) => {
+      // Correct event type
+      if (interactiveRef.current) {
+        const rect = interactiveRef.current.getBoundingClientRect();
+        setTgX(event.clientX - rect.left); // Correctly update tgX and tgY
+        setTgY(event.clientY - rect.top);
       }
-      setCurX(curX + (tgX - curX) / 20);
-      setCurY(curY + (tgY - curY) / 20);
-      interactiveRef.current.style.transform = `translate(${Math.round(
-        curX
-      )}px, ${Math.round(curY)}px)`;
+    };
+    if (interactive) {
+      //Only attach if interactive is true
+      window.addEventListener("mousemove", handleMouseMove);
     }
 
-    move();
-  }, [tgX, tgY]);
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (interactiveRef.current) {
-      const rect = interactiveRef.current.getBoundingClientRect();
-      setTgX(event.clientX - rect.left);
-      setTgY(event.clientY - rect.top);
-    }
-  };
+    return () => {
+      if (interactive) {
+        window.removeEventListener("mousemove", handleMouseMove);
+      }
+    };
+  }, [interactive]); // Dependency array
 
   const [isSafari, setIsSafari] = useState(false);
-  useEffect(() => {
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-  }, []);
+  //Removed use effect
 
   return (
     <div
@@ -167,7 +207,6 @@ export const BackgroundGradientAnimation = ({
         {interactive && (
           <div
             ref={interactiveRef}
-            onMouseMove={handleMouseMove}
             className={cn(
               `absolute [background:radial-gradient(circle_at_center,_rgba(var(--pointer-color),_0.8)_0,_rgba(var(--pointer-color),_0)_50%)_no-repeat]`,
               `[mix-blend-mode:var(--blending-value)] w-full h-full -top-1/2 -left-1/2`,
