@@ -1,12 +1,17 @@
-// BentoGrid.tsx
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { IoCopyOutline } from "react-icons/io5";
-import Lottie from "react-lottie";
+// import Lottie from "react-lottie";
 import { cn } from "@/lib/utils";
 import { BackgroundGradientAnimation } from "./GradientBg";
-import GridGlobe from "./GridGlobe";
+import dynamic from "next/dynamic";
 import animationData from "@/data/confetti.json";
 import MagicButton from "../MagicButton";
+
+// Import GridGlobe as a dynamic import with ssr: false
+const GridGlobe = dynamic(() => import("./GridGlobe"), {
+  ssr: false,
+});
 
 export const BentoGrid = ({
   className,
@@ -50,6 +55,12 @@ export const BentoGridItem = ({
   const rightLists = ["VueJS", "NuxtJS", "GraphQL"];
 
   const [copied, setCopied] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Set isMounted to true when component mounts
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const defaultOptions = {
     loop: copied,
@@ -61,9 +72,11 @@ export const BentoGridItem = ({
   };
 
   const handleCopy = () => {
-    const text = "hkstyles1212@gmail.com";
-    navigator.clipboard.writeText(text);
-    setCopied(true);
+    if (isMounted && typeof navigator !== "undefined") {
+      const text = "hkstyles1212@gmail.com";
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+    }
   };
 
   return (
@@ -108,13 +121,13 @@ export const BentoGridItem = ({
           )}
         </div>
 
-        {id === 6 && (
+        {id === 6 && isMounted && (
           <BackgroundGradientAnimation>
             <div className="absolute z-50 inset-0 flex items-center justify-center text-black font-bold px-4 pointer-events-none text-3xl text-center md:text-4xl lg:text-7xl"></div>
           </BackgroundGradientAnimation>
         )}
 
-        {id === 2 && (
+        {id === 2 && isMounted && (
           <div className="absolute inset-0 w-full h-full">
             <GridGlobe />
           </div>
@@ -162,14 +175,14 @@ export const BentoGridItem = ({
               </div>
             </div>
           )}
-          {id === 6 && (
+          {id === 6 && isMounted && (
             <div className="mt-5 relative">
               <div
                 className={`absolute -bottom-5 right-0 ${
                   copied ? "block" : "block"
                 }`}
               >
-                <Lottie options={defaultOptions} height={200} width={400} />
+                {/* <Lottie options={defaultOptions} height={200} width={400} /> */}
               </div>
 
               <MagicButton

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
@@ -8,6 +8,7 @@ const World = dynamic(() => import("./Globe").then((m) => m.World), {
 });
 
 const GridGlobe = () => {
+  const [isMounted,setIsMounted] = useState(false);
   const globeConfig = {
     pointSize: 4,
     globeColor: "#062056",
@@ -30,6 +31,9 @@ const GridGlobe = () => {
     autoRotate: true,
     autoRotateSpeed: 0.5,
   };
+  useEffect(()=>{
+    setIsMounted(true)
+  },[])
   const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
   const sampleArcs = [
     {
@@ -393,7 +397,9 @@ const GridGlobe = () => {
       color: colors[Math.floor(Math.random() * (colors.length - 1))],
     },
   ];
-
+ if (!isMounted) {
+   return <div className="w-full h-full bg-indigo-800/20"></div>;
+ }
   // Modify in GridGlobe.jsx
  // GridGlobe.jsx
 return (

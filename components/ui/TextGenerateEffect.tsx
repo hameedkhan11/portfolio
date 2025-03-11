@@ -13,6 +13,7 @@ export const TextGenerateEffect = ({
   const [scope, animate] = useAnimate();
   let wordsArray = words.split(" ");
   useEffect(() => {
+    if(typeof window === 'undefined') return;
     console.log(wordsArray);
     animate(
       "span",
